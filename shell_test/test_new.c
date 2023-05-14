@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 void execute_cd(char **args)
 {
@@ -179,11 +180,15 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     pid_t pid;
     char *filename;
     char *full_path;
+    bool from_pipe = false;
     (void) argv;
+    
 
-    while (1)
+    while (1 && !from_pipe)
     {
         write(STDOUT_FILENO, "$ ", 2);
+        if (isatty(STDOUT_FILENO) == 0)
+            from_pipe = true;
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
             perror("getline");
