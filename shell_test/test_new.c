@@ -30,8 +30,15 @@ void execute_exit()
 char *find_executable(char *filename, char **env)
 {
     char *full_path = NULL;
+    char *path_env = NULL;
+    char *path = NULL;
+    char *token = NULL;
+    size_t path_len;
+    size_t filename_len;
+    int i;
 
-    // Check if filename is an absolute path
+    /** Check if filename is an absolute path
+    */
     if (filename[0] == '/')
     {
         if (access(filename, X_OK) == 0)
@@ -50,9 +57,9 @@ char *find_executable(char *filename, char **env)
         }
     }
 
-    // Get the PATH environment variable
-    char *path_env = NULL;
-    for (int i = 0; env[i] != NULL; i++)
+    /** Get the PATH environment variable
+    */
+    for (i = 0; env[i] != NULL; i++)
     {
         if (strncmp(env[i], "PATH=", 5) == 0)
         {
@@ -66,17 +73,17 @@ char *find_executable(char *filename, char **env)
         return NULL;
     }
 
-    char *path = strdup(path_env);
+    path = strdup(path_env);
     if (path == NULL) {
         perror("strdup");
         exit(1);
     }
 
-    char *token = strtok(path, ":");
+    token = strtok(path, ":");
     while (token != NULL)
     {
-        size_t path_len = strlen(token);
-        size_t filename_len = strlen(filename);
+        path_len = strlen(token);
+        filename_len = strlen(filename);
         full_path = malloc(path_len + filename_len + 2);
         if (full_path == NULL)
         {
@@ -97,10 +104,14 @@ char *find_executable(char *filename, char **env)
 }
 void execute_printenv(char **env, char *var)
 {
-    // If a variable is provided, print only its value
+    char *value;
+    char **envp;
+
+    /** If a variable is provided, print only its value
+    */
     if (var != NULL)
     {
-        char *value = getenv(var);
+        value = getenv(var);
         if (value != NULL)
         {
             printf("%s\n", value);
@@ -112,8 +123,9 @@ void execute_printenv(char **env, char *var)
     }
     else
     {
-        // Otherwise, print all environment variables
-        char **envp = env;
+        /**Otherwise, print all environment variables
+        */
+        envp = env;
         while (*envp != NULL)
         {
             printf("%s\n", *envp);
@@ -148,13 +160,19 @@ void execute_unsetenv(char **args)
 }
 
 
-int main(int argc, char **argv, char **env)
+int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv, char **env)
 {
     char *input = NULL;
     size_t input_size = 0;
     ssize_t read;
     char *args[64];
     int status;
+    char *token;
+    int i;
+    pid_t pid;
+    char *filename;
+    char *full_path;
+    (void) argv;
 
     while (1)
     {
@@ -164,13 +182,15 @@ int main(int argc, char **argv, char **env)
             perror("getline");
             exit(1);
         }
-         if (input[read - 1] == '\n')
-            {
-                input[read - 1] = '\0';
-            }
-        // Parse input into tokens
-        char *token = strtok(input, " ");
-        int i = 0;
+        if (input[read - 1] == '\n')
+        {
+            input[read - 1] = '\0';
+        }
+
+        /** Parse input into tokens
+        */
+        token = strtok(input, " ");
+        i = 0;
         while (token != NULL)
         {
             args[i] = token;
@@ -179,7 +199,8 @@ int main(int argc, char **argv, char **env)
         }
         args[i] = NULL;
 
-        // Check for built-in commands
+        /** Check for built-in commands
+        */
         if (strcmp(args[0], "cd") == 0)
         {
             execute_cd(args);
@@ -190,18 +211,20 @@ int main(int argc, char **argv, char **env)
             execute_exit();
         }
         if (strcmp(args[0], "printenv") == 0)
+        {
+            if (args[1] != NULL)
             {
-                if (args[1] != NULL)
-                {
-                    execute_printenv(env, args[1]); // Print only the value of a specific variable
-                }
-                else
-                {
-                    execute_printenv(env, NULL); // Print all environment variables
-                }
-                continue;
+                execute_printenv(env, args[1]); /** Print only the value of a specific variable
+            */
             }
-         else if (strcmp(args[0], "setenv") == 0)
+            else
+            {
+                execute_printenv(env, NULL); /** Print all environment variables
+            */
+            }
+            continue;
+        }
+        else if (strcmp(args[0], "setenv") == 0)
         {
             execute_setenv(args);
             continue;
@@ -212,14 +235,14 @@ int main(int argc, char **argv, char **env)
             continue;
         }
 
-        // Fork and execute command
-        pid_t pid = fork();
+        /** Fork and execute command */
+        pid = fork();
         if (pid == 0)
         {
-            // Child process
-            
-            char *filename = args[0];
-            char *full_path = find_executable(filename, env);
+            /** Child process */
+
+            filename = args[0];
+            full_path = find_executable(filename, env);
             if (full_path != NULL)
             {
                 execve(full_path, args, env);
@@ -234,13 +257,13 @@ int main(int argc, char **argv, char **env)
         }
         else if (pid < 0)
         {
-            // Error forking
+            /** Error forking */
             perror("fork");
             exit(1);
         }
         else
         {
-            // Parent process
+            /** Parent process */
             waitpid(pid, &status, 0);
         }
     }
