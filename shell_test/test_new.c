@@ -7,6 +7,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdarg.h>
+
+#ifndef SIZE
+#define SIZE 64
+#endif
 
 void execute_cd(char **args)
 {
@@ -34,7 +39,72 @@ void execute_exit(char **args)
 
     exit(status);
 }
+int _snprintf(char *str, size_t size, const char *format, ...)
+{
+    va_list args;
+    int len = 0;
+    char *p = str;
+    const char *fmt = format;
 
+    va_start(args, format);
+
+    while (*fmt != '\0' && len < (int)size - 1)
+    {
+        if (*fmt == '%')
+        {
+            /* Handle format specifier */
+            fmt++;
+            switch (*fmt)
+            {
+                case 's':
+                {
+                    char *s = va_arg(args, char *);
+                    while (*s != '\0' && len < (int)size - 1)
+                    {
+                        *p++ = *s++;
+                        len++;
+                    }
+                    break;
+                }
+                case 'd':
+                {
+                    int d = va_arg(args, int);
+                    char buf[32];
+                    int n = snprintf(buf, sizeof(buf), "%d", d);
+                    if (n < 0 || len + n >= (int)size)
+                    {
+                        /* Error or buffer overflow */
+                        va_end(args);
+                        return -1;
+                    }
+                    memcpy(p, buf, n);
+                    p += n;
+                    len += n;
+                    break;
+                }
+                /* Handle other format specifiers as needed */
+                default:
+                    /* Unsupported format specifier */
+                    va_end(args);
+                    return -1;
+            }
+        }
+        else
+        {
+            /* Handle regular character */
+            *p++ = *fmt;
+            len++;
+        }
+        fmt++;
+    }
+
+    va_end(args);
+
+    /* Null-terminate the string */
+    *p = '\0';
+
+    return len;
+}
 char *find_executable(char *filename, char **env)
 {
     char *full_path = NULL;
@@ -98,7 +168,11 @@ char *find_executable(char *filename, char **env)
             perror("malloc");
             exit(1);
         }
-        snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename);
+       if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
+{
+    /* Error or buffer overflow */
+    return NULL;
+}
         if (access(full_path, X_OK) == 0)
         {
             free(path);
@@ -173,7 +247,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     char *input = NULL;
     size_t input_size = 0;
     ssize_t read;
-    char *args[64];
+    char *args[SIZE];
     int status;
     char *token;
     int i;

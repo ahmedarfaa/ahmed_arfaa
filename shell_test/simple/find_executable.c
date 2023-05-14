@@ -69,7 +69,11 @@ char *find_executable(char *filename, char **env)
             perror("malloc");
             exit(1);
         }
-        snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename);
+	if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
+	{
+    		/* Error or buffer overflow */
+	    return NULL;
+	}
         if (access(full_path, X_OK) == 0)
         {
             free(path);
