@@ -40,7 +40,7 @@ char *find_executable(char *filename, char **env)
     */
     for (i = 0; env[i] != NULL; i++)
     {
-        if (strncmp(env[i], "PATH=", 5) == 0)
+        if (_strncmp(env[i], "PATH=", 5) == 0)
         {
             path_env = env[i] + 5;
             break;

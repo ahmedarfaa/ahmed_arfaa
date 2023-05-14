@@ -43,16 +43,45 @@ return (num *sign);
 /**
  *
  */
-
 char *_memcpy(char *dest, char *src, unsigned int n)
 {
 	memcpy(dest, src, n);
 	return (dest);
+}
+/**
+ *
+ */
 
-
+int _strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+    for (i = 0; i < n; i++)
+    {
+        if (s1[i] != s2[i])
+        {
+            return s1[i] - s2[i];
+        }
+        else if (s1[i] == '\0')
+        {
+            return 0;
+        }
+    }
+    return 0;
 }
 
 /**
  *
  */
+char *_strdup(const char *s)
+{
+	size_t len;
+	char *p;
 
+    len = _strlen(s) + 1;
+    p = malloc(len);
+    if (p != NULL)
+    {
+       memcpy(p, s, len);
+    }
+    return p;
+}

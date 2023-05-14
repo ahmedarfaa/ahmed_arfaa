@@ -26,6 +26,8 @@ int _snprintf(char *str, size_t size, const char *format, ...);
 char *_memcpy(char *dest, char *src, unsigned int n);
 int _atoi(char *s);
 size_t _strlen(const char *s);
+int _strncmp(const char *s1, const char *s2, size_t n);
+char *_strdup(const char *s);
 
 
 #endif
