@@ -43,7 +43,7 @@ return (num *sign);
 /**
  *
  */
-char *_memcpy(char *dest, char *src, unsigned int n)
+char *_memcpy(char *dest, const char *src, unsigned int n)
 {
 	memcpy(dest, src, n);
 	return (dest);
@@ -81,7 +81,7 @@ char *_strdup(const char *s)
     p = malloc(len);
     if (p != NULL)
     {
-       memcpy(p, s, len);
+       _memcpy(p, s, len);
     }
     return p;
 }
