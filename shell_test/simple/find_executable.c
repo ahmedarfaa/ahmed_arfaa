@@ -61,8 +61,8 @@ char *find_executable(char *filename, char **env)
     token = strtok(path, ":");
     while (token != NULL)
     {
-        path_len = strlen(token);
-        filename_len = strlen(filename);
+        path_len = _strlen(token);
+        filename_len = _strlen(filename);
         full_path = malloc(path_len + filename_len + 2);
         if (full_path == NULL)
         {

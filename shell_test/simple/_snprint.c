@@ -42,7 +42,7 @@ int _snprintf(char *str, size_t size, const char *format, ...)
                         va_end(args);
                         return -1;
                     }
-                    memcpy(p, buf, n);
+                    _memcpy(p, buf, n);
                     p += n;
                     len += n;
                     break;
