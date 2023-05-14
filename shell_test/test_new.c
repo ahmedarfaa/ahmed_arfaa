@@ -22,9 +22,16 @@ void execute_cd(char **args)
     }
 }
 
-void execute_exit()
+void execute_exit(char **args)
 {
-    exit(0);
+    int status = 0;
+
+    if (args[1] != NULL)
+    {
+        status = atoi(args[1]);
+    }
+
+    exit(status);
 }
 
 char *find_executable(char *filename, char **env)
@@ -208,7 +215,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
         }
         else if (strcmp(args[0], "exit") == 0)
         {
-            execute_exit();
+            execute_exit(args);
         }
         if (strcmp(args[0], "printenv") == 0)
         {
