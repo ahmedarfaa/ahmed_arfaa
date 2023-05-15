@@ -98,7 +98,7 @@ void execute_setenv(char **args) {
         return;
     }
 
-    memcpy2(new_environ, environ, i * sizeof(char *));
+    memcpy(new_environ, environ, i * sizeof(char *));
     new_environ[i] = new_env;
     new_environ[i + 1] = NULL;
     environ = new_environ;
