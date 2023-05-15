@@ -84,6 +84,12 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             }
             continue;
         }
+	/* Check if the command is uppercase or starts with a $ */
+    	if (_isupper(args[0][0]) || _strncmp(args[0], "$", 1) == 0)
+	{
+        	execute_printenv(env, args[0] + 1); /** Print the value of the variable */
+        	continue;
+    	}
         else if (_strcmp(args[0], "setenv") == 0)
         {
             execute_setenv(args);
