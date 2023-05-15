@@ -24,8 +24,6 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
     while (1 && !from_pipe)
     {
-	    if (argv[0] == NULL)
-		    break;
 
 	 chang = getppid();
         
