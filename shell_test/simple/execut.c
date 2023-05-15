@@ -71,8 +71,8 @@ void execute_setenv(char **args) {
         return;
     }
 
-    name_len = strlen(args[1]);
-    value_len = strlen(args[2]);
+    name_len = _strlen(args[1]);
+    value_len = _strlen(args[2]);
     total_len = name_len + value_len + 2;
 
     new_env = malloc(total_len);
@@ -81,10 +81,10 @@ void execute_setenv(char **args) {
         return;
     }
 
-    snprintf(new_env, total_len, "%s=%s", args[1], args[2]);
+    _snprintf(new_env, total_len, "%s=%s", args[1], args[2]);
 
     for (i = 0; environ[i] != NULL; i++) {
-        if (strncmp(environ[i], args[1], name_len) == 0 && environ[i][name_len] == '=') {
+        if (_strncmp(environ[i], args[1], name_len) == 0 && environ[i][name_len] == '=') {
             free(environ[i]);
             environ[i] = new_env;
             return;
