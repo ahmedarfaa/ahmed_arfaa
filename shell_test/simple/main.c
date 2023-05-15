@@ -17,12 +17,24 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     char *filename;
     char *full_path;
     bool from_pipe = false;
+    pid_t original = getppid();
+    pid_t chang;
     (void) argv;
 
 
     while (1 && !from_pipe)
     {
-        write(STDOUT_FILENO, "$ ", 2);
+	 chang = getppid();
+        
+       if (chang == original)
+        {
+            write(STDOUT_FILENO, "$ ", 2);
+            
+        }
+        else
+        {
+            write(STDOUT_FILENO, " ($) ", 5);
+        }
         if (isatty(STDOUT_FILENO) == 0)
             from_pipe = true;
         if ((read = getline(&input, &input_size, stdin)) == -1)

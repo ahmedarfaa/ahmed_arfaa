@@ -15,6 +15,7 @@
 #ifndef SIZE
 #define SIZE 64
 #endif
+extern char **environ;
 
 void execute_cd(char **args);
 void execute_exit(char **args);
@@ -29,5 +30,6 @@ size_t _strlen(const char *s);
 int _strncmp(const char *s1, const char *s2, size_t n);
 char *_strdup(const char *s);
 int _strcmp(char *s1, char *s2);
+char *_memcpy2(char **dest, char **src, unsigned int n);
 
 #endif
