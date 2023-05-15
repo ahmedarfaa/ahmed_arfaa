@@ -62,17 +62,17 @@ void execute_printenv(char **env, char *var)
  *
  */
 
-void execute_setenv(char **args) {
+void _setenv(char ***envp, const char *name, const char *value) {
     int name_len, value_len, total_len, i;
     char *new_env, **new_environ;
 
-    if (args[1] == NULL || args[2] == NULL) {
+    if (name == NULL || value == NULL) {
         fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
         return;
     }
 
-    name_len = _strlen(args[1]);
-    value_len = _strlen(args[2]);
+    name_len = strlen(name);
+    value_len = strlen(value);
     total_len = name_len + value_len + 2;
 
     new_env = malloc(total_len);
@@ -81,12 +81,12 @@ void execute_setenv(char **args) {
         return;
     }
 
-    _snprintf(new_env, total_len, "%s=%s", args[1], args[2]);
+    snprintf(new_env, total_len, "%s=%s", name, value);
 
-    for (i = 0; environ[i] != NULL; i++) {
-        if (_strncmp(environ[i], args[1], name_len) == 0 && environ[i][name_len] == '=') {
-            free(environ[i]);
-            environ[i] = new_env;
+    for (i = 0; (*envp)[i] != NULL; i++) {
+        if (strncmp((*envp)[i], name, name_len) == 0 && (*envp)[i][name_len] == '=') {
+            free((*envp)[i]);
+            (*envp)[i] = new_env;
             return;
         }
     }
@@ -98,11 +98,19 @@ void execute_setenv(char **args) {
         return;
     }
 
-    memcpy(new_environ, environ, i * sizeof(char *));
+    for (i = 0; (*envp)[i] != NULL; i++) {
+        new_environ[i] = (*envp)[i];
+    }
+
     new_environ[i] = new_env;
     new_environ[i + 1] = NULL;
-    environ = new_environ;
+    *envp = new_environ;
 }
+
+void execute_setenv(char **args) {
+    _setenv(&environ, args[1], args[2]);
+}
+
 /**
  *
  */

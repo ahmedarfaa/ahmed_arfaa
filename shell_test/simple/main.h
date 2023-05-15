@@ -30,7 +30,7 @@ size_t _strlen(const char *s);
 int _strncmp(const char *s1, const char *s2, size_t n);
 char *_strdup(const char *s);
 int _strcmp(char *s1, char *s2);
-char *_memcpy2(char **dest, char **src, unsigned int n);
 int _isupper(int c);
+void _setenv(char ***envp, const char *name, const char *value);
 
 #endif
