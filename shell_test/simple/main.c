@@ -73,16 +73,16 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             args[i] = NULL;
 
             /** Check for built-in commands */
-            if (strcmp(args[0], "cd") == 0)
+            if (_strcmp(args[0], "cd") == 0)
             {
                 execute_cd(args);
                 continue;
             }
-            else if (strcmp(args[0], "exit") == 0)
+            else if (_strcmp(args[0], "exit") == 0)
             {
                 execute_exit(args);
             }
-            if (strcmp(args[0], "printenv") == 0)
+            if (_strcmp(args[0], "printenv") == 0)
             {
                 if (args[1] != NULL)
                 {
@@ -94,16 +94,16 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                 }
                 continue;
             }
-            if (strncmp(args[0], "$", 1) == 0) {
+            if (_strncmp(args[0], "$", 1) == 0) {
                 execute_printenv(env, args[0] + 1); /** Print the value of the variable */
                 continue;
             }
-            else if (strcmp(args[0], "setenv") == 0)
+            else if (_strcmp(args[0], "setenv") == 0)
             {
                 execute_setenv(args);
                 continue;
             }
-            else if (strcmp(args[0], "unsetenv") == 0)
+            else if (_strcmp(args[0], "unsetenv") == 0)
             {
                 execute_unsetenv(args);
                 continue;
