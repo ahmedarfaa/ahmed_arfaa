@@ -13,7 +13,7 @@
 #include <stdarg.h>
 
 #ifndef SIZE
-#define SIZE 64
+#define SIZE 1024
 #endif
 extern char **environ;
 

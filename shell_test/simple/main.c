@@ -19,11 +19,15 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     pid_t original, chang;
     int num_commands;
     char *commands[SIZE / 2 + 1];
+    struct stat st;
     (void) argv;
 
     original = getppid();
     chang = getppid();
 
+    if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode)) {
+    from_pipe = true;
+    }
     while (1 && !from_pipe)
     {
 
@@ -36,8 +40,6 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
         {
             write(STDOUT_FILENO, "$ ", 2);
         }
-        if (isatty(STDOUT_FILENO) == 0)
-            from_pipe = true;
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
                 exit(1);

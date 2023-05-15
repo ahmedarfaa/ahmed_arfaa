@@ -71,8 +71,8 @@ void _setenv(char ***envp, const char *name, const char *value) {
         return;
     }
 
-    name_len = strlen(name);
-    value_len = strlen(value);
+    name_len = _strlen(name);
+    value_len = _strlen(value);
     total_len = name_len + value_len + 2;
 
     new_env = malloc(total_len);
@@ -81,7 +81,7 @@ void _setenv(char ***envp, const char *name, const char *value) {
         return;
     }
 
-    snprintf(new_env, total_len, "%s=%s", name, value);
+    _snprintf(new_env, total_len, "%s=%s", name, value);
 
     for (i = 0; (*envp)[i] != NULL; i++) {
         if (strncmp((*envp)[i], name, name_len) == 0 && (*envp)[i][name_len] == '=') {

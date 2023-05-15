@@ -8,9 +8,10 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #ifndef SIZE
-#define SIZE 64
+#define SIZE 1024
 #endif
 
 void execute_cd(char **args)
@@ -115,13 +116,30 @@ char *find_executable(char *filename, char **env)
     size_t filename_len;
     int i;
 
-    /** Check if filename is an absolute path
+    /** Check if filename is an absolute path or a relative path starting with "./"
     */
     if (filename[0] == '/')
     {
         if (access(filename, X_OK) == 0)
         {
             full_path = strdup(filename);
+            if (full_path == NULL)
+            {
+                perror("strdup");
+                exit(1);
+            }
+            return full_path;
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+    else if (strncmp(filename, "./", 2) == 0)
+    {
+        if (access(filename + 2, X_OK) == 0)
+        {
+            full_path = strdup(filename + 2);
             if (full_path == NULL)
             {
                 perror("strdup");
@@ -168,11 +186,11 @@ char *find_executable(char *filename, char **env)
             perror("malloc");
             exit(1);
         }
-       if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
-{
-    /* Error or buffer overflow */
-    return NULL;
-}
+        if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
+        {
+            /* Error or buffer overflow */
+            return NULL;
+        }
         if (access(full_path, X_OK) == 0)
         {
             free(path);
@@ -215,30 +233,80 @@ void execute_printenv(char **env, char *var)
         }
     }
 }
-void execute_setenv(char **args)
-{
-    if (args[1] == NULL || args[2] == NULL)
-    {
+
+extern char **environ;
+
+void _setenv(char ***envp, const char *name, const char *value) {
+    int name_len, value_len, total_len, i;
+    char *new_env, **new_environ;
+
+    if (name == NULL || value == NULL) {
         fprintf(stderr, "Usage: setenv VARIABLE VALUE\n");
         return;
     }
-    if (setenv(args[1], args[2], 1) != 0)
-    {
-        perror("setenv");
+
+    name_len = strlen(name);
+    value_len = strlen(value);
+    total_len = name_len + value_len + 2;
+
+    new_env = malloc(total_len);
+    if (new_env == NULL) {
+        perror("malloc");
+        return;
     }
+
+    snprintf(new_env, total_len, "%s=%s", name, value);
+
+    for (i = 0; (*envp)[i] != NULL; i++) {
+        if (strncmp((*envp)[i], name, name_len) == 0 && (*envp)[i][name_len] == '=') {
+            free((*envp)[i]);
+            (*envp)[i] = new_env;
+            return;
+        }
+    }
+
+    new_environ = malloc((i + 2) * sizeof(char *));
+    if (new_environ == NULL) {
+        perror("malloc");
+        free(new_env);
+        return;
+    }
+
+    for (i = 0; (*envp)[i] != NULL; i++) {
+        new_environ[i] = (*envp)[i];
+    }
+
+    new_environ[i] = new_env;
+    new_environ[i + 1] = NULL;
+    *envp = new_environ;
 }
 
-void execute_unsetenv(char **args)
-{
-    if (args[1] == NULL)
-    {
+void execute_setenv(char **args) {
+    _setenv(&environ, args[1], args[2]);
+}
+
+
+void execute_unsetenv(char **args) {
+    int name_len, i, j;
+
+    if (args[1] == NULL) {
         fprintf(stderr, "Usage: unsetenv VARIABLE\n");
         return;
     }
-    if (unsetenv(args[1]) != 0)
-    {
-        perror("unsetenv");
+
+    name_len = strlen(args[1]);
+
+    for (i = 0; environ[i] != NULL; i++) {
+        if (strncmp(environ[i], args[1], name_len) == 0 && environ[i][name_len] == '=') {
+            free(environ[i]);
+            for (j = i; environ[j] != NULL; j++) {
+                environ[j] = environ[j + 1];
+            }
+            return;
+        }
     }
+
+    fprintf(stderr, "Variable %s not found\n", args[1]);
 }
 
 
@@ -250,39 +318,66 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     char *args[SIZE];
     int status;
     char *token;
-    int i;
+    int i, c;
     pid_t pid;
     char *filename;
     char *full_path;
     bool from_pipe = false;
+    pid_t original = getppid();
+    pid_t chang = getppid();
+    int num_commands;
+    char *commands[SIZE / 2 + 1];
     (void) argv;
+
     
 
     while (1 && !from_pipe)
     {
-        write(STDOUT_FILENO, "$ ", 2);
+        
+       if (chang == original)
+        {
+            write(STDOUT_FILENO, " ($) ", 5);
+            
+        }
+        else if (chang != original)
+        {
+            write(STDOUT_FILENO, "$ ", 2);
+        }
         if (isatty(STDOUT_FILENO) == 0)
             from_pipe = true;
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
-            perror("getline");
-            exit(1);
+                exit(1);
         }
         if (input[read - 1] == '\n')
         {
             input[read - 1] = '\0';
         }
 
+        if (input[0] == '\0')
+        {
+                continue;
+        }
         /** Parse input into tokens
         */
-        token = strtok(input, " ");
-        i = 0;
-        while (token != NULL)
-        {
-            args[i] = token;
-            i++;
-            token = strtok(NULL, " ");
+        /** Split input into commands */
+        num_commands = 0;
+        commands[num_commands] = strtok(input, ";");
+        while (commands[num_commands] != NULL) {
+            num_commands++;
+            commands[num_commands] = strtok(NULL, ";");
         }
+
+        for (c = 0; c < num_commands; c++) {
+            /** Parse command into tokens */
+            token = strtok(commands[c], " ");
+            i = 0;
+            while (token != NULL)
+            {
+                args[i] = token;
+                i++;
+                token = strtok(NULL, " ");
+            }
         args[i] = NULL;
 
         /** Check for built-in commands
@@ -310,6 +405,10 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             }
             continue;
         }
+        if (isupper(args[0][0]) || strncmp(args[0], "$", 1) == 0) {
+            execute_printenv(env, args[0] + 1); /** Print the value of the variable */
+            continue;
+            }
         else if (strcmp(args[0], "setenv") == 0)
         {
             execute_setenv(args);
@@ -320,15 +419,17 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             execute_unsetenv(args);
             continue;
         }
+        /** checking first before fork*/
+        filename = args[0];
+        full_path = find_executable(filename, env);
 
         /** Fork and execute command */
         pid = fork();
         if (pid == 0)
         {
             /** Child process */
-
-            filename = args[0];
-            full_path = find_executable(filename, env);
+            chang = getppid();
+            
             if (full_path != NULL)
             {
                 execve(full_path, args, env);
@@ -352,6 +453,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             /** Parent process */
             waitpid(pid, &status, 0);
         }
+    }
     }
 
     free(input);
