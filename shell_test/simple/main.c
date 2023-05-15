@@ -83,14 +83,16 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             continue;
         }
 
+	/** checking first if the commad is in path before frok */
+
+        filename = args[0];
+        full_path = find_executable(filename, env);
         /** Fork and execute command */
         pid = fork();
         if (pid == 0)
         {
             /** Child process */
 
-            filename = args[0];
-            full_path = find_executable(filename, env);
             if (full_path != NULL)
             {
                 execve(full_path, args, env);
