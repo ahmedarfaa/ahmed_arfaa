@@ -20,7 +20,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     (void) argv;
 
 
-    while (1 && !from_pipe)
+    while (1 || !from_pipe)
     {
         write(STDOUT_FILENO, "$ ", 2);
         if (isatty(STDOUT_FILENO) == 0)
