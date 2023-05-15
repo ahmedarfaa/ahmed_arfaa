@@ -24,6 +24,9 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
     while (1 && !from_pipe)
     {
+	    if (argv[0] == NULL)
+		    break;
+
 	 chang = getppid();
         
        if (chang == original)
@@ -39,13 +42,17 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             from_pipe = true;
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
-            perror("getline");
-            exit(1);
+		exit(1);
         }
         if (input[read - 1] == '\n')
         {
             input[read - 1] = '\0';
         }
+
+	if (input[0] == '\0')
+    	{
+        	continue;
+    	}	
 
         /** Parse input into tokens
         */
