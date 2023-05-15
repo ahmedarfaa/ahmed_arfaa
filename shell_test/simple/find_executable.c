@@ -5,7 +5,6 @@
  *
  *
  */
-
 char *find_executable(char *filename, char **env)
 {
     char *full_path = NULL;
@@ -16,16 +15,33 @@ char *find_executable(char *filename, char **env)
     size_t filename_len;
     int i;
 
-    /** Check if filename is an absolute path
+    /** Check if filename is an absolute path or a relative path starting with "./"
     */
     if (filename[0] == '/')
     {
         if (access(filename, X_OK) == 0)
         {
-            full_path = strdup(filename);
+            full_path = _strdup(filename);
             if (full_path == NULL)
             {
-                perror("strdup");
+                perror("_strdup");
+                exit(1);
+            }
+            return full_path;
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+    else if (_strncmp(filename, "./", 2) == 0)
+    {
+        if (access(filename + 2, X_OK) == 0)
+        {
+            full_path = _strdup(filename + 2);
+            if (full_path == NULL)
+            {
+                perror("_strdup");
                 exit(1);
             }
             return full_path;
@@ -52,9 +68,9 @@ char *find_executable(char *filename, char **env)
         return NULL;
     }
 
-    path = strdup(path_env);
+    path = _strdup(path_env);
     if (path == NULL) {
-        perror("strdup");
+        perror("_strdup");
         exit(1);
     }
 
@@ -69,11 +85,11 @@ char *find_executable(char *filename, char **env)
             perror("malloc");
             exit(1);
         }
-	if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
-	{
-    		/* Error or buffer overflow */
-	    return NULL;
-	}
+        if (_snprintf(full_path, path_len + filename_len + 2, "%s/%s", token, filename) < 0)
+        {
+            /* Error or buffer overflow */
+            return NULL;
+        }
         if (access(full_path, X_OK) == 0)
         {
             free(path);
