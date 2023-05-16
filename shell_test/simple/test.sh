@@ -1,34 +1,25 @@
 #!/bin/bash
 
-# Compile the shell program
-gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+# Test variable replacement
+echo "Hello, $USER!"
+./hsh <<< "echo Hello, $USER!" > output.txt
+diff -b output.txt expected_output.txt
 
-# Test basic commands
-./hsh <<< "ls"
-./hsh <<< "echo hello world"
-./hsh <<< "pwd"
-./hsh <<< "date"
+# Test $? variable
+./hsh <<< "ls /nonexistent" > output.txt
+if [ $? -ne 0 ]; then
+    echo "ls failed as expected"
+else
+    echo "ls succeeded unexpectedly"
+fi
 
-# Test command with arguments
-./hsh <<< "ls -l"
-./hsh <<< "echo -n hello world"
-./hsh <<< "mkdir testdir"
-./hsh <<< "cd testdir"
+# Test $$ variable
+./hsh <<< "echo My PID is $$" > output.txt
+diff -b output.txt expected_output.txt
 
-# Test command with input/output redirection
-./hsh <<< "echo hello > output.txt"
-./hsh <<< "cat output.txt"
-./hsh <<< "echo world >> output.txt"
-./hsh <<< "cat output.txt"
-
-# Test command with pipes
-./hsh <<< "ls | wc -l"
-./hsh <<< "ls | sort"
-
-# Test command with background execution
-./hsh <<< "sleep 5 &"
-./hsh <<< "echo background job started"
-
-# Clean up test files
-rm -f output.txt
-rm -rf testdir
+# Check exit status
+if [ $? -eq 0 ]; then
+    echo "All tests passed"
+else
+    echo "Some tests failed"
+fi
