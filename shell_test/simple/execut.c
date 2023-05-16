@@ -8,9 +8,10 @@
 
 void execute_cd(char **args)
 {
+	char *home = getenv("HOME");
     if (args[1] == NULL)
     {
-        fprintf(stderr, "cd: expected argument to \"cd\"\n");
+        chdir(home);
     }
     else
     {
