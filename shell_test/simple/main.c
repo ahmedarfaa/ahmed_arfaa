@@ -145,62 +145,11 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             pid = fork();
             if (pid == 0)
             {
-                /** Child process */
-                chang = getppid();
-                            for (i = 0; args[i] != NULL; i++)
-                            {
-                            if (_strcmp(args[i], "<") == 0)
-                            {
-                                int fd = open(args[i+1], O_RDONLY);
-                                if (fd == -1)
-                                {
-                                    perror("open");
-                                    exit(1);
-                                }
-                                if (dup2(fd, STDIN_FILENO) == -1)
-                            {
-                                perror("dup2");
-                                exit(1);
-                            }
-                            close(fd);
-                            args[i] = NULL;
-                            break;
-                        }
-                    }
-                    /** Check for output redirection */
-                    for (i = 0; args[i] != NULL; i++)
-                    {
-                        if (_strcmp(args[i], ">") == 0)
-                        {
-                            int fd = open(args[i+1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
-                            if (fd == -1)
-                            {
-                                perror("open");
-                                exit(1);
-                            }
-                            if (dup2(fd, STDOUT_FILENO) == -1)
-                            {
-                                perror("dup2");
-                                exit(1);
-                            }
-                            close(fd);
-                            args[i] = NULL;
-                            break;
-                        }
-                    }
-
-                if (full_path != NULL)
-                {
-                    execve(full_path, args, env);
+		    execute_command_with_redirection(args, full_path);
+                    /** If execve returns, it must have failed */
                     perror("execve");
                     exit(1);
-                }
-                else
-                {
-                    fprintf(stderr, "%s: command not found\n", args[0]);
-                    exit(1);
-                }
-            }
+	    }
             else if (pid < 0)
             {
                 /** Error forking */

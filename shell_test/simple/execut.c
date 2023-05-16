@@ -202,15 +202,15 @@ void execute_unsetenv(char **args)
  *
  *
  */
-
 void execute_exit(char **args)
 {
-    int status = 0;
-
     if (args[1] != NULL)
     {
-        status = _atoi(args[1]);
+        int exit_code = atoi(args[1]);
+        exit(exit_code);
     }
-
-    exit(status);
+    else
+    {
+       exit (0);
+    }
 }
