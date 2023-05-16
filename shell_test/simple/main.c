@@ -113,6 +113,11 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                 execute_echo(args);
                 continue;
             }
+            else if (_strcmp(args[0], "clear") == 0)
+            {
+                execute_clear();
+                continue;
+            }
 
             /** checking first before fork*/
             filename = args[0];

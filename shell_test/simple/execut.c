@@ -85,6 +85,13 @@ void execute_echo(char **args)
 /**
  *
  */
+void execute_clear(void)
+{
+    system("clear");
+}
+/**
+ *
+ */
 
 char *_getenv(const char *name)
 {
