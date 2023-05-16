@@ -5,10 +5,26 @@
  *
  */
 
+char *_getenvv(const char *name) {
+    char *value = NULL;
+    char **env;
+
+    for (env = environ; *env != NULL; env++) {
+        if (_strncmp(*env, name, _strlen(name)) == 0 && (*env)[_strlen(name)] == '=') {
+            value = *env + _strlen(name) + 1;
+            break;
+        }
+    }
+    return value;
+}
+
+/**
+ *
+ */
 
 void execute_cd(char **args)
 {
-	char *home = getenv("HOME");
+	char *home = _getenvv("HOME");
     if (args[1] == NULL)
     {
         chdir(home);
@@ -35,7 +51,7 @@ void execute_printenv(char **env, char *var)
     */
     if (var != NULL)
     {
-        value = getenv(var);
+        value = _getenvv(var);
         if (value != NULL)
         {
             printf("%s\n", value);
