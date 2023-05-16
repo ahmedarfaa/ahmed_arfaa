@@ -58,6 +58,14 @@ void execute_echo(char **args)
                 write(STDOUT_FILENO, value, _strlen(value));
             }
         }
+	else if (args[i][0] == '$' && args[i][1] == '$')
+        {
+            pid_t value = getpid();
+            if (value >= 0)
+            {
+                printf("%d", value);
+            }
+        }
         else
         {
             write(STDOUT_FILENO, args[i], _strlen(args[i]));
@@ -73,8 +81,6 @@ void execute_echo(char **args)
         }
         close(stdout_fd);
     }
-
-    write(STDOUT_FILENO, "\n", 1);
 }
 /**
  *
