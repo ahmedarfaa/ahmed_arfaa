@@ -481,6 +481,65 @@ char *find_executable(char *filename, char **env)
     free(path);
     return NULL;
 }
+unsigned int equal(char cut, const char *string)
+{
+	unsigned int index = 0;
+
+	while (string[index] != 0)
+	{
+		if (cut == string[index])
+			return (0);
+		index++;
+	}
+	return (1);
+}
+
+/**
+ * _strtok - string tokenization
+ * @string: the string
+ * @cutter: the cutter
+ *
+ * Return: argument cutted
+ */
+
+char *_strtok(char *string, const char *cutter)
+{
+	static char *firstTok;
+	static char *secondTok;
+	long int i;
+
+	if (string == NULL && cutter == NULL)
+		return (NULL);
+	if (string != NULL)
+		secondTok = string;
+	firstTok = secondTok;
+	if (firstTok == NULL)
+		return (NULL);
+	for (i = 0; secondTok[i] != 0; i++)
+	{
+		if (equal(secondTok[i], cutter) == 1)
+			break;
+	}
+	if (secondTok[i] == 0 || secondTok[i] == 35)
+	{
+		return (NULL);
+	}
+	firstTok = secondTok + i;
+	secondTok = firstTok;
+	for (i = 0; secondTok[i] != 0; i++)
+	{
+		if (equal(secondTok[i], cutter) == 0)
+			break;
+	}
+	if (secondTok[i] == 0)
+		secondTok = NULL;
+	else
+	{
+		secondTok[i] = 0;
+		secondTok += i + 1;
+	}
+	return (firstTok);
+}
 
 
 
@@ -542,21 +601,21 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
         /** Split input into commands */
         num_commands = 0;
-        commands[num_commands] = strtok(input, ";");
+        commands[num_commands] = _strtok(input, ";");
         while (commands[num_commands] != NULL) {
             num_commands++;
-            commands[num_commands] = strtok(NULL, ";");
+            commands[num_commands] = _strtok(NULL, ";");
         }
 
         for (c = 0; c < num_commands; c++) {
             /** Parse command into tokens */
-            token = strtok(commands[c], " ");
+            token = _strtok(commands[c], " ");
             i = 0;
             while (token != NULL)
             {
                 args[i] = token;
                 i++;
-                token = strtok(NULL, " ");
+                token = _strtok(NULL, " ");
             }
             args[i] = NULL;
 
