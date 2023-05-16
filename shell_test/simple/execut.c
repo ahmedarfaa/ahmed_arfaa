@@ -20,9 +20,17 @@ void execute_echo(char **args)
             printf(" ");
         }
 
-        if (args[i][0] == '$')
+        if (args[i][0] == '$' || _isupper(args[i][0]))
         {
             char *value = _getenv(args[i] + 1);
+            if (value != NULL)
+            {
+                printf("%s", value);
+            }
+        }
+        if (_isupper(args[i][0]))
+        {
+            char *value = _getenv(args[i]);
             if (value != NULL)
             {
                 printf("%s", value);
