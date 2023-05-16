@@ -167,7 +167,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                             break;
                         }
                     }
-                    // Check for output redirection
+                    /** Check for output redirection */
                     for (i = 0; args[i] != NULL; i++)
                     {
                         if (_strcmp(args[i], ">") == 0)
