@@ -21,7 +21,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
     original = getppid();
     chang = getppid();
-
+    
     if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode)) {
         from_pipe = true;
     }
