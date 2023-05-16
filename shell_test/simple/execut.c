@@ -5,7 +5,7 @@
  *
  */
 
-char *_getenvv(const char *name) {
+char *_getenv(const char *name) {
     char *value = NULL;
     char **env;
 
@@ -24,7 +24,7 @@ char *_getenvv(const char *name) {
 
 void execute_cd(char **args)
 {
-	char *home = _getenvv("HOME");
+	char *home = _getenv("HOME");
     if (args[1] == NULL)
     {
         chdir(home);
@@ -51,7 +51,7 @@ void execute_printenv(char **env, char *var)
     */
     if (var != NULL)
     {
-        value = _getenvv(var);
+        value = _getenv(var);
         if (value != NULL)
         {
             printf("%s\n", value);
@@ -101,7 +101,7 @@ void _setenv(char ***envp, const char *name, const char *value) {
     _snprintf(new_env, total_len, "%s=%s", name, value);
 
     for (i = 0; (*envp)[i] != NULL; i++) {
-        if (strncmp((*envp)[i], name, name_len) == 0 && (*envp)[i][name_len] == '=') {
+        if (_strncmp((*envp)[i], name, name_len) == 0 && (*envp)[i][name_len] == '=') {
             free((*envp)[i]);
             (*envp)[i] = new_env;
             return;

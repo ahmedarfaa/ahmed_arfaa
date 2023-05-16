@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <fcntl.h>
 
 #ifndef SIZE
 #define SIZE 1024
