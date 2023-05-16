@@ -56,21 +56,21 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
         /** Split input into commands */
         num_commands = 0;
-        commands[num_commands] = strtok(input, ";");
+        commands[num_commands] = __strtok(input, ";");
         while (commands[num_commands] != NULL) {
             num_commands++;
-            commands[num_commands] = strtok(NULL, ";");
+            commands[num_commands] = __strtok(NULL, ";");
         }
 
         for (c = 0; c < num_commands; c++) {
             /** Parse command into tokens */
-            token = strtok(commands[c], " ");
+            token = __strtok(commands[c], " ");
             i = 0;
             while (token != NULL)
             {
                 args[i] = token;
                 i++;
-                token = strtok(NULL, " ");
+                token = __strtok(NULL, " ");
             }
             args[i] = NULL;
 
