@@ -253,6 +253,21 @@ void execute_cd(char **args)
  *
  */
 
+char *_getenv(const char *name) {
+    char *value = NULL;
+    for (char **env = environ; *env != NULL; env++) {
+        if (strncmp(*env, name, strlen(name)) == 0 && (*env)[strlen(name)] == '=') {
+            value = *env + strlen(name) + 1;
+            break;
+        }
+    }
+    return value;
+}
+/**
+ * 
+ * 
+ */
+
 void execute_printenv(char **env, char *var)
 {
     char *value;
@@ -262,7 +277,7 @@ void execute_printenv(char **env, char *var)
     */
     if (var != NULL)
     {
-        value = getenv(var);
+        value = _getenv(var);
         if (value != NULL)
         {
             printf("%s\n", value);

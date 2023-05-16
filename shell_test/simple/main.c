@@ -1,8 +1,5 @@
 #include "main.h"
 
-/**
- *
- */
 int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv, char **env)
 {
     char *input = NULL;
@@ -26,24 +23,25 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     chang = getppid();
 
     if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode)) {
-    from_pipe = true;
+        from_pipe = true;
     }
+
     while (1 && !from_pipe)
     {
-
-       if (chang != original)
+        if (chang != original)
         {
             write(STDOUT_FILENO, " ($) ", 5);
-
         }
         else if (chang == original)
         {
             write(STDOUT_FILENO, "$ ", 2);
         }
+
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
-                exit(1);
+            exit(1);
         }
+
         if (input[read - 1] == '\n')
         {
             input[read - 1] = '\0';
@@ -51,7 +49,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
         if (input[0] == '\0')
         {
-                continue;
+            continue;
         }
 
         /** Split input into commands */
@@ -84,7 +82,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             {
                 execute_exit(args);
             }
-            if (_strcmp(args[0], "printenv") == 0)
+            else if (_strcmp(args[0], "printenv") == 0)
             {
                 if (args[1] != NULL)
                 {
@@ -96,7 +94,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                 }
                 continue;
             }
-            if (_strncmp(args[0], "$", 1) == 0) {
+            else if (_strncmp(args[0], "$", 1) == 0) {
                 execute_printenv(env, args[0] + 1); /** Print the value of the variable */
                 continue;
             }
@@ -110,29 +108,8 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                 execute_unsetenv(args);
                 continue;
             }
-	     else if (_strcmp(args[0], "echo") == 0)
+            else if (_strcmp(args[0], "echo") == 0)
             {
-                /** Check for output redirection */
-                for (i = 0; args[i] != NULL; i++)
-                {
-                    if (_strcmp(args[i], ">") == 0)
-                    {
-                        int fd = open(args[i+1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
-                        if (fd == -1)
-                        {
-                            perror("open");
-                            exit(1);
-                        }
-                        if (dup2(fd, STDOUT_FILENO) == -1)
-                        {
-                            perror("dup2");
-                            exit(1);
-                        }
-                        close(fd);
-                        args[i] = NULL;
-                        break;
-                    }
-                }
                 execute_echo(args);
                 continue;
             }
@@ -145,11 +122,11 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             pid = fork();
             if (pid == 0)
             {
-		    execute_command_with_redirection(args, full_path);
-                    /** If execve returns, it must have failed */
-                    perror("execve");
-                    exit(1);
-	    }
+                execute_command_with_redirection(args, full_path);
+                /** If execve returns, it must have failed */
+                perror("execve");
+                exit(1);
+            }
             else if (pid < 0)
             {
                 /** Error forking */
