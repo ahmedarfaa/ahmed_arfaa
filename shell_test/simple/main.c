@@ -110,6 +110,32 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
                 execute_unsetenv(args);
                 continue;
             }
+	     else if (_strcmp(args[0], "echo") == 0)
+            {
+                /** Check for output redirection */
+                for (i = 0; args[i] != NULL; i++)
+                {
+                    if (_strcmp(args[i], ">") == 0)
+                    {
+                        int fd = open(args[i+1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
+                        if (fd == -1)
+                        {
+                            perror("open");
+                            exit(1);
+                        }
+                        if (dup2(fd, STDOUT_FILENO) == -1)
+                        {
+                            perror("dup2");
+                            exit(1);
+                        }
+                        close(fd);
+                        args[i] = NULL;
+                        break;
+                    }
+                }
+                execute_echo(args);
+                continue;
+            }
 
             /** checking first before fork*/
             filename = args[0];

@@ -4,20 +4,59 @@
  *
  *
  */
+void execute_echo(char **args)
+{
+    int i;
+    bool first_arg = true;
 
-char *_getenv(const char *name) {
-    char *value = NULL;
-    char **env;
+    for (i = 1; args[i] != NULL; i++)
+    {
+        if (first_arg)
+        {
+            first_arg = false;
+        }
+        else
+        {
+            printf(" ");
+        }
 
-    for (env = environ; *env != NULL; env++) {
-        if (_strncmp(*env, name, _strlen(name)) == 0 && (*env)[_strlen(name)] == '=') {
-            value = *env + _strlen(name) + 1;
-            break;
+        if (args[i][0] == '$')
+        {
+            char *value = _getenv(args[i] + 1);
+            if (value != NULL)
+            {
+                printf("%s", value);
+            }
+        }
+        else
+        {
+            printf("%s", args[i]);
         }
     }
-    return value;
+
+    printf("\n");
 }
 
+/**
+ *
+ */
+
+char *_getenv(const char *name)
+{
+    char **env = environ;
+    size_t name_len = strlen(name);
+
+    while (*env != NULL)
+    {
+        if (strncmp(*env, name, name_len) == 0 && (*env)[name_len] == '=')
+        {
+            return *env + name_len + 1;
+        }
+        env++;
+    }
+
+    return NULL;
+}
 /**
  *
  */
