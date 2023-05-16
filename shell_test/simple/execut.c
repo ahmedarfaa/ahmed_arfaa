@@ -6,37 +6,76 @@
  */
 void execute_echo(char **args)
 {
-    int i;
-    bool first_arg = true;
+    int i, fd;
+    bool redirect_output = false;
+    int stdout_fd = dup(STDOUT_FILENO);
 
     for (i = 1; args[i] != NULL; i++)
     {
-        if (first_arg)
+        if (_strcmp(args[i], ">") == 0)
         {
-            first_arg = false;
+            redirect_output = true;
+            fd = open(args[i+1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
+            if (fd == -1)
+            {
+                perror("open");
+                exit(1);
+            }
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                perror("dup2");
+                exit(1);
+            }
+            close(fd);
+            args[i] = NULL;
+            break;
         }
-        else
-        {
-            printf(" ");
-        }
+    }
 
-        if (args[i][0] == '$')
+    for (i = 1; args[i] != NULL; i++)
+    {
+        if (i > 1)
         {
-            char *value = _getenv(args[i] + 1);
+            write(STDOUT_FILENO, " ", 1);
+        }
+        if (args[i][0] == '"' || args[i][0] == '\'')
+        {
+            char *end_quote = strchr(args[i] + 1, args[i][0]);
+            if (end_quote != NULL)
+            {
+                write(STDOUT_FILENO, args[i] + 1, end_quote - args[i] - 1);
+            }
+            else
+            {
+                write(STDOUT_FILENO, args[i] + 1, _strlen(args[i]) - 1);
+            }
+        }
+        else if (args[i][0] == '$')
+        {
+            char *value = getenv(args[i] + 1);
             if (value != NULL)
             {
-                printf("%s", value);
+                write(STDOUT_FILENO, value, _strlen(value));
             }
         }
         else
         {
-            printf("%s", args[i]);
+            write(STDOUT_FILENO, args[i], _strlen(args[i]));
         }
     }
 
-    printf("\n");
-}
+    if (redirect_output)
+    {
+        if (dup2(stdout_fd, STDOUT_FILENO) == -1)
+        {
+            perror("dup2");
+            exit(1);
+        }
+        close(stdout_fd);
+    }
 
+    write(STDOUT_FILENO, "\n", 1);
+}
 /**
  *
  */
