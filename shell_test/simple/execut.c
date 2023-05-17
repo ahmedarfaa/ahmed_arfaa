@@ -38,7 +38,7 @@ void execute_echo(char **args, int status)
         {
             write(STDOUT_FILENO, " ", 1);
         }
-        if (args[i][0] == '"' || args[i][0] == '\'')
+        else if (args[i][0] == '"' || args[i][0] == '\'')
         {
             char *end_quote = strchr(args[i] + 1, args[i][0]);
             if (end_quote != NULL)
@@ -52,7 +52,7 @@ void execute_echo(char **args, int status)
                 write(STDOUT_FILENO, "\n", 1);
             }
         }
-        else if (args[i][0] == '$')
+         if (args[i][0] == '$')
         {
             char *value = _getenv(args[i] + 1);
             if (value != NULL)
@@ -61,7 +61,7 @@ void execute_echo(char **args, int status)
                 write(STDOUT_FILENO, "\n", 1);
             }
         }
-	else if (args[i][0] == '$' && args[i][1] == '$')
+	     if (args[i][0] == '$' && args[i][1] == '$')
         {
             pid_t value = getpid();
             if (value >= 0)
@@ -75,11 +75,7 @@ void execute_echo(char **args, int status)
                 sprintf(exit_status, "%d\n", WEXITSTATUS(status));
                 write(STDOUT_FILENO, exit_status, _strlen(exit_status));
             }
-        else
-        {
-            write(STDOUT_FILENO, args[i], _strlen(args[i]));
-            write(STDOUT_FILENO, "\n", 1);
-        }
+        
     }
 
     if (redirect_output)
