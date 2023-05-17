@@ -4,7 +4,7 @@
  *
  *
  */
-void execute_echo(char **args)
+void execute_echo(char **args, int status)
 {
     int i, fd;
     bool redirect_output = false;
