@@ -110,7 +110,7 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
             }
             else if (_strcmp(args[0], "echo") == 0)
             {
-                execute_echo(args, status);
+                execute_echo(args, status, env);
                 continue;
             }
             else if (_strcmp(args[0], "clear") == 0)

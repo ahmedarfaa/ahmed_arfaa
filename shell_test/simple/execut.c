@@ -4,7 +4,7 @@
  *
  *
  */
-void execute_echo(char **args, int status)
+void execute_echo(char **args, int status, char **env)
 {
     int i, fd;
     bool redirect_output = false;
@@ -52,30 +52,37 @@ void execute_echo(char **args, int status)
                 write(STDOUT_FILENO, "\n", 1);
             }
         }
-         if (args[i][0] == '$')
+        else if (_strcmp(args[i], "$?") == 0)
         {
-            char *value = _getenv(args[i] + 1);
-            if (value != NULL)
+            char exit_status[10];
+            sprintf(exit_status, "%d", WEXITSTATUS(status));
+            write(STDOUT_FILENO, exit_status, strlen(exit_status));
+            write(STDOUT_FILENO, "\n", 1);
+        }
+        else if (args[i][0] == '$')
+        {
+            if (args[i][1] == '\0')
             {
-                write(STDOUT_FILENO, value, _strlen(value));
-                write(STDOUT_FILENO, "\n", 1);
+                execute_printenv(env, NULL); /** Print all environment variables */
+            }
+            else if (args[i][1] == '$')
+            {
+                pid_t value = getpid();
+                if (value >= 0)
+                {
+                    printf("%d\n", value);
+                }
+            }
+            else
+            {
+                execute_printenv(env, args[i] + 1); /** Print the value of the variable */
             }
         }
-	     if (args[i][0] == '$' && args[i][1] == '$')
+        else
         {
-            pid_t value = getpid();
-            if (value >= 0)
-            {
-                printf("%d\n", value);
-            }
+            write(STDOUT_FILENO, args[i], _strlen(args[i]));
+            write(STDOUT_FILENO, "\n", 1);
         }
-         if (_strcmp(args[i], "$?") == 0)
-            {
-                char exit_status[10];
-                sprintf(exit_status, "%d\n", WEXITSTATUS(status));
-                write(STDOUT_FILENO, exit_status, _strlen(exit_status));
-            }
-        
     }
 
     if (redirect_output)
