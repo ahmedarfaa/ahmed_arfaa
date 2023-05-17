@@ -56,9 +56,10 @@ void execute_echo(char **args, int status)
             if (value != NULL)
             {
                 write(STDOUT_FILENO, value, _strlen(value));
+                write(STDOUT_FILENO, "\n", 1);
             }
         }
-	if (args[i][0] == '$' && args[i][1] == '$')
+	else if (args[i][0] == '$' && args[i][1] == '$')
         {
             pid_t value = getpid();
             if (value >= 0)
