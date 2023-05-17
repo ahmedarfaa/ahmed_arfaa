@@ -13,14 +13,13 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
     char *filename;
     char *full_path;
     bool from_pipe = false;
-    pid_t original, chang;
+
     int num_commands;
     char *commands[SIZE / 2 + 1];
     struct stat st;
     (void) argv;
 
-    original = getppid();
-    chang = getppid();
+    
     
     if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode)) {
         from_pipe = true;
@@ -28,15 +27,9 @@ int main(int __attribute__((unused)) argc, char ** __attribute__((unused)) argv,
 
     while (1 && !from_pipe)
     {
-        if (chang != original)
-        {
-            write(STDOUT_FILENO, " ($) ", 5);
-        }
-        else if (chang == original)
-        {
+        
             write(STDOUT_FILENO, "$ ", 2);
-        }
-
+        
         if ((read = getline(&input, &input_size, stdin)) == -1)
         {
             exit(1);
