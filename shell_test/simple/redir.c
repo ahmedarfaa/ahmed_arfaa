@@ -33,7 +33,10 @@ void execute_command_with_redirection(char **args, char *full_path)
             break;
         }
     }
+///
 
+
+//
     /** Check for output redirection */
     for (i = 0; args[i] != NULL; i++)
     {

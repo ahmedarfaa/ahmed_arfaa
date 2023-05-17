@@ -52,7 +52,7 @@ void execute_echo(char **args)
         }
         else if (args[i][0] == '$')
         {
-            char *value = getenv(args[i] + 1);
+            char *value = _getenv(args[i] + 1);
             if (value != NULL)
             {
                 write(STDOUT_FILENO, value, _strlen(value));
