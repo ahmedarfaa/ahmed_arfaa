@@ -55,7 +55,7 @@ void execute_echo(char **args, int status, char **env)
         else if (_strcmp(args[i], "$?") == 0)
         {
             char exit_status[10];
-            sprintf(exit_status, "%d", WEXITSTATUS(status));
+            _sprintf(exit_status, "%d", WEXITSTATUS(status));
             write(STDOUT_FILENO, exit_status, _strlen(exit_status));
             write(STDOUT_FILENO, "\n", 1);
         }
