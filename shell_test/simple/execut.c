@@ -44,10 +44,12 @@ void execute_echo(char **args, int status)
             if (end_quote != NULL)
             {
                 write(STDOUT_FILENO, args[i] + 1, end_quote - args[i] - 1);
+                write(STDOUT_FILENO, "\n", 1);
             }
             else
             {
                 write(STDOUT_FILENO, args[i] + 1, _strlen(args[i]) - 1);
+                write(STDOUT_FILENO, "\n", 1);
             }
         }
         else if (args[i][0] == '$')
@@ -67,7 +69,7 @@ void execute_echo(char **args, int status)
                 printf("%d\n", value);
             }
         }
-        else if (_strcmp(args[i], "$?") == 0)
+         if (_strcmp(args[i], "$?") == 0)
             {
                 char exit_status[10];
                 sprintf(exit_status, "%d\n", WEXITSTATUS(status));
@@ -76,6 +78,7 @@ void execute_echo(char **args, int status)
         else
         {
             write(STDOUT_FILENO, args[i], _strlen(args[i]));
+            write(STDOUT_FILENO, "\n", 1);
         }
     }
 
