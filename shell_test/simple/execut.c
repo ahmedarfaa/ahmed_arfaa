@@ -63,7 +63,8 @@ void execute_echo(char **args, int status, char **env)
         {
             if (args[i][1] == '\0')
             {
-                execute_printenv(env, NULL); /** Print all environment variables */
+                write(STDOUT_FILENO, args[i], _strlen(args[i]));
+                write(STDOUT_FILENO, "\n", 1);
             }
             else if (args[i][1] == '$')
             {
