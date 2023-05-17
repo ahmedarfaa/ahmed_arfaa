@@ -52,7 +52,7 @@ void execute_echo(char **args, int status, char **env)
                 write(STDOUT_FILENO, "\n", 1);
             }
         }
-        else if (_strcmp(args[i], "$?") == 0)
+        else if (_strncmp(args[i], "$?", 2) == 0)
         {
             char exit_status[10];
             _sprintf(exit_status, "%d", WEXITSTATUS(status));
