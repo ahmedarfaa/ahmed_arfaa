@@ -4,8 +4,14 @@
  *
  */
 
+#include <stdarg.h>
+
 int _snprintf(char *str, size_t size, const char *format, ...)
 {
+    int d, temp;
+     char buf[32];
+    int n = 0;
+    char *s;
     va_list args;
     int len = 0;
     char *p = str;
@@ -23,7 +29,7 @@ int _snprintf(char *str, size_t size, const char *format, ...)
             {
                 case 's':
                 {
-                    char *s = va_arg(args, char *);
+                    s = va_arg(args, char *);
                     while (*s != '\0' && len < (int)size - 1)
                     {
                         *p++ = *s++;
@@ -33,18 +39,32 @@ int _snprintf(char *str, size_t size, const char *format, ...)
                 }
                 case 'd':
                 {
-                    int d = va_arg(args, int);
-                    char buf[32];
-                    int n = snprintf(buf, sizeof(buf), "%d", d);
-                    if (n < 0 || len + n >= (int)size)
+                    d = va_arg(args, int);
+                    
+                    temp = d;
+                    if (d < 0)
                     {
-                        /* Error or buffer overflow */
-                        va_end(args);
-                        return -1;
+                        *p++ = '-';
+                        len++;
+                        temp = -temp;
                     }
-                    _memcpy(p, buf, n);
-                    p += n;
-                    len += n;
+                    if (temp == 0)
+                    {
+                        buf[n++] = '0';
+                    }
+                    else
+                    {
+                        while (temp > 0)
+                        {
+                            buf[n++] = '0' + temp % 10;
+                            temp /= 10;
+                        }
+                    }
+                    while (n > 0 && len < (int)size - 1)
+                    {
+                        *p++ = buf[--n];
+                        len++;
+                    }
                     break;
                 }
                 /* Handle other format specifiers as needed */
