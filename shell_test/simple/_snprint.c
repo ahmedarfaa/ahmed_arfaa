@@ -4,8 +4,6 @@
  *
  */
 
-#include <stdarg.h>
-
 int _snprintf(char *str, size_t size, const char *format, ...)
 {
     int d, temp;

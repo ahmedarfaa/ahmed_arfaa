@@ -1,6 +1,5 @@
 #include "main.h" 
 
-#include <stdarg.h>
 
 int _sprintf(char *buf, const char *format, ...)
 {
