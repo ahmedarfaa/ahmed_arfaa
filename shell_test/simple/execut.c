@@ -71,7 +71,7 @@ void execute_echo(char **args, int status)
             {
                 char exit_status[10];
                 sprintf(exit_status, "%d\n", WEXITSTATUS(status));
-                write(STDOUT_FILENO, exit_status, strlen(exit_status));
+                write(STDOUT_FILENO, exit_status, _strlen(exit_status));
             }
         else
         {
@@ -103,7 +103,7 @@ void execute_clear(void)
 char *_getenv(const char *name)
 {
     char **env = environ;
-    size_t name_len = strlen(name);
+    size_t name_len = _strlen(name);
 
     while (*env != NULL)
     {
