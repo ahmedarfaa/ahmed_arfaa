@@ -110,7 +110,23 @@ int _strcmp(char *s1, char *s2)
 /**
  *
  */
+char *_strchr(char *s, char c)
+{
+	int i;
 
+	for (i = 0; s[i] >= '\0'; i++)
+	{
+		if (s[i] == c)
+		{
+			return (s + i);
+		}
+	}
+	return ('\0');
+
+}
+/**
+ *
+ */
 int _isupper(int c)
 {
 

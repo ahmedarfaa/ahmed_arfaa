@@ -40,7 +40,7 @@ void execute_echo(char **args, int status, char **env)
         }
         else if (args[i][0] == '"' || args[i][0] == '\'')
         {
-            char *end_quote = strchr(args[i] + 1, args[i][0]);
+            char *end_quote = _strchr(args[i] + 1, args[i][0]);
             if (end_quote != NULL)
             {
                 write(STDOUT_FILENO, args[i] + 1, end_quote - args[i] - 1);
@@ -56,7 +56,7 @@ void execute_echo(char **args, int status, char **env)
         {
             char exit_status[10];
             sprintf(exit_status, "%d", WEXITSTATUS(status));
-            write(STDOUT_FILENO, exit_status, strlen(exit_status));
+            write(STDOUT_FILENO, exit_status, _strlen(exit_status));
             write(STDOUT_FILENO, "\n", 1);
         }
         else if (args[i][0] == '$')
