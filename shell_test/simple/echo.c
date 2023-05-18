@@ -27,7 +27,7 @@ void execute_echo(char **args, int status, char **env)
 			perror("open");
 			exit(1);
 		}
-			if (dup2(fd, STDOUT_FILENO) == -1)
+			if (_dup2(fd, STDOUT_FILENO) == -1)
 		{
 			perror("dup2");
 			exit(1);

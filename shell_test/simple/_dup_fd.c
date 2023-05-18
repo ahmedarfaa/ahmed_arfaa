@@ -20,3 +20,32 @@ int _dup(int oldfd)
 
     return newfd;
 }
+
+/**
+ *
+ */
+
+int _dup2(int oldfd, int newfd)
+{
+    int tmpfd;
+
+    if (oldfd == newfd)
+    {
+        return newfd;
+    }
+
+    tmpfd = fcntl(oldfd, F_DUPFD, newfd);
+    if (tmpfd == -1)
+    {
+        perror("fcntl");
+        exit(1);
+    }
+
+    if (tmpfd != oldfd && close(oldfd) == -1)
+    {
+        perror("close");
+        exit(1);
+    }
+
+    return tmpfd;
+}
