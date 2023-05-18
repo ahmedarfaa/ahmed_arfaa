@@ -43,5 +43,6 @@ void execute_clear(void);
 char *_strchr(char *s, char c);
 int _sprintf(char *buf, const char *format, ...);
 int execute_command(char **args, char **env, int *status);
+int _dup(int oldfd);
 
 #endif
