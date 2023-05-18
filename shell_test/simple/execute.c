@@ -40,16 +40,27 @@ int execute_command(char **args, char **env, int *status)
     {
         execute_unsetenv(args);
     }
-    else if (_strcmp(args[0], "echo") == 0 && _strcmp(args[1], "$$") == 0)
+    else if (_strcmp(args[0], "echo") == 0) 
     {
-        execute_echo(args, *status);
+        if (_strcmp(args[1], "$$") == 0)
+        {
+            execute_echo(args, *status);
         return (0);
+        }
+        else if ( _strcmp(args[1], "$?") == 0)
+        {
+            execute_echo(args, *status);
+            return (0);
+        }
+        else if ((_strcmp(args[1], "$") == 0) && (_isupper(args[1][1])))
+        {
+            execute_echo(args, *status);
+            return (0);
+        }
+        else
+        return (-1);
     }
-    else if (_strcmp(args[0], "echo") == 0 && _strcmp(args[1], "$?") == 0)
-    {
-        execute_echo(args, *status);
-        return (0);
-    }
+   
     else if (_strcmp(args[0], "clear") == 0)
     {
         execute_clear();
