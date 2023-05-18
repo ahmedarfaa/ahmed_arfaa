@@ -14,7 +14,7 @@ void execute_echo(char **args, int status, char **env)
 	int i, fd;
 	bool redirect_output = false;
 
-	int stdout_fd = _dup(STDOUT_FILENO);
+	int stdout_fd = dup(STDOUT_FILENO);
 
 	for (i = 1; args[i] != NULL; i++)
 	{
@@ -27,7 +27,7 @@ void execute_echo(char **args, int status, char **env)
 			perror("open");
 			exit(1);
 		}
-			if (_dup2(fd, STDOUT_FILENO) == -1)
+			if (dup2(fd, STDOUT_FILENO) == -1)
 		{
 			perror("dup2");
 			exit(1);
