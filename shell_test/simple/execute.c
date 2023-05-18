@@ -1,9 +1,12 @@
 #include "main.h"
 
 /**
- *
+ * execute_command - execute a command
+ * @args: array of arguments
+ * @env: environment variables
+ * @status: exit status
+ * Return: 0 on success, -1 on failure
  */
-
 int execute_command(char **args, char **env, int *status)
 {
     if (_strcmp(args[0], "cd") == 0)
@@ -25,7 +28,8 @@ int execute_command(char **args, char **env, int *status)
             execute_printenv(env, NULL); /** Print all environment variables */
         }
     }
-    else if (_strncmp(args[0], "$", 1) == 0) {
+    else if (_strncmp(args[0], "$", 1) == 0)
+    {
         execute_printenv(env, args[0] + 1); /** Print the value of the variable */
     }
     else if (_strcmp(args[0], "setenv") == 0)
@@ -36,9 +40,15 @@ int execute_command(char **args, char **env, int *status)
     {
         execute_unsetenv(args);
     }
-    else if (_strcmp(args[0], "echo") == 0)
+    else if (_strcmp(args[0], "echo") == 0 && _strcmp(args[1], "$$") == 0)
     {
-        execute_echo(args, *status, env);
+        execute_echo(args, *status);
+        return (0);
+    }
+    else if (_strcmp(args[0], "echo") == 0 && _strcmp(args[1], "$?") == 0)
+    {
+        execute_echo(args, *status);
+        return (0);
     }
     else if (_strcmp(args[0], "clear") == 0)
     {
