@@ -4,7 +4,7 @@
  *
  */
 
-void execute_command_with_redirection(char **args, char *full_path)
+void execute_command_with_redirection(char **args, char *full_path, char **env)
 {
     int i;
     int input_fd, output_fd;
@@ -60,7 +60,7 @@ void execute_command_with_redirection(char **args, char *full_path)
     /** Execute command */
     if (has_input_redirection || has_output_redirection)
     {
-        if (execve(full_path, args, NULL) == -1)
+        if (execve(full_path, args, env) == -1)
         {
             perror("execve");
             exit(1);
@@ -68,7 +68,7 @@ void execute_command_with_redirection(char **args, char *full_path)
     }
     else
     {
-        if (execve(full_path, args, NULL) == -1)
+        if (execve(full_path, args, env) == -1)
         {
             perror("execve");
             exit(1);

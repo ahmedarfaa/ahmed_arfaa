@@ -14,7 +14,7 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 	ssize_t read;
 	int status, i, c, num_commands;
 	struct stat st;
-	pid_t pid;
+	pid_t pid, original = getppid(), new = getppid();
 	bool from_pipe = false;
 	(void) argv;
 
@@ -22,7 +22,10 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 	from_pipe = true;
 	while (1 && !from_pipe)
 	{
+		if (new == original)
 		write(STDOUT_FILENO, "$ ", 2);
+		else
+		write(STDOUT_FILENO, " ($) ", 5);
 		read = getline(&input, &input_size, stdin);
 	if (read == -1)
 		exit(1);
@@ -45,12 +48,12 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 			filename = args[0];
 			full_path = find_executable(filename, env), pid = fork();
 			if (pid == 0)
-			execute_command_with_redirection(args, full_path), perror("execve"), exit(1);
+			{	execute_command_with_redirection(args, full_path, env);
+				perror("execve"), exit(1);	}
 			else if (pid < 0)
 				perror("fork"), exit(1);
 			else
-				waitpid(pid, &status, 0);
+				new = getppid(), waitpid(pid, &status, 0);
 	}	}	}
 	free(input);
-	return (0);
-}
+	return (0);	}
