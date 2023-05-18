@@ -54,11 +54,11 @@ void execute_echo(char **args, int status, char **env)
         }
         else if (_strncmp(args[i], "$?", 2) == 0)
         {
-            char exit_status[10];
-            _sprintf(exit_status, "%d", WEXITSTATUS(status));
-            write(STDOUT_FILENO, exit_status, _strlen(exit_status));
-            write(STDOUT_FILENO, "\n", 1);
-        }
+                    char exit_status[10];
+                        _sprintf(exit_status, "%d", WEXITSTATUS(status));
+                        write(STDOUT_FILENO, exit_status, _strlen(exit_status));
+                        write(STDOUT_FILENO, "\n", 1);
+                    }
         else if (args[i][0] == '$')
         {
             if (args[i][1] == '\0')
@@ -78,6 +78,12 @@ void execute_echo(char **args, int status, char **env)
             {
                 execute_printenv(env, args[i] + 1); /** Print the value of the variable */
             }
+        }
+        else if (_isupper(args[i][0]))
+        {
+            
+            
+                execute_printenv(env, args[i]); /** Print the value of the variable */
         }
         else
         {

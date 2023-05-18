@@ -8,7 +8,7 @@
  */
 int main(int __attribute__((unused)) argc, char **argv, char **env)
 {
-	char *input = NULL, *args[SIZE], *token, *filename, *full_path;
+	char *input = NULL, *args[SIZE], *token, *filename, *fullpath;
 	char *commands[SIZE / 2 + 1];
 	size_t input_size = 0;
 	ssize_t read;
@@ -46,9 +46,9 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 		if (execute_command(args, env, &status) == -1)
 		{
 			filename = args[0];
-			full_path = find_executable(filename, env), pid = fork();
+			fullpath = find_executable(filename, env), pid = fork();
 			if (pid == 0)
-			{	execute_command_with_redirection(args, full_path, env);
+			{	execute_command_with_redirection(args, fullpath, env);
 				perror("execve"), exit(1);	}
 			else if (pid < 0)
 				perror("fork"), exit(1);
