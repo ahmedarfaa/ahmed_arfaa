@@ -38,7 +38,7 @@ char *__strtok(char *string, const char *cutter);
 unsigned int _equal(char cut, const char *string);
 char *_getenv(const char *name);
 void execute_echo(char **args, int status, char **env);
-void execute_command_with_redirection(char **args, char *full_path, char **env);
+void execute_command_with_redirection(char **args, char *fullpath, char **env);
 void execute_clear(void);
 char *_strchr(char *s, char c);
 int _sprintf(char *buf, const char *format, ...);
