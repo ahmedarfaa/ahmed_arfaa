@@ -17,7 +17,7 @@ int execute_command(char **args, char **env, int *status)
 	{
 		execute_exit(args);
 	}
-	else if (_strcmp(args[0], "printenv") == 0)
+	else if (_strcmp(args[0], "printenv") == 0 || _strcmp(args[0], "env") == 0)
 	{
 	if (args[1] != NULL)
 	{

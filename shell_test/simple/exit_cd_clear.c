@@ -19,7 +19,7 @@ void execute_cd(char **args)
 {
 	char *home = _getenv("HOME");
 
-	if (args[1] == NULL)
+	if (args[1] == NULL || _strncmp(args[1], "$HOME", 5) == 0)
 	{
 		chdir(home);
 	}

@@ -34,14 +34,14 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 	if (input[0] == '\0')
 		continue;
 	num_commands = 0;
-	commands[num_commands] = __strtok(input, ";");
+	commands[num_commands] = _stringtok(input, ";");
 	while (commands[num_commands] != NULL)
-		num_commands++, commands[num_commands] = __strtok(NULL, ";");
+		num_commands++, commands[num_commands] = _stringtok(NULL, ";");
 	for (c = 0; c < num_commands; c++)
 	{
-		token = __strtok(commands[c], " "), i = 0;
+		token = _stringtok(commands[c], " "), i = 0;
 		while (token != NULL)
-		{		args[i] = token, i++, token = __strtok(NULL, " ");
+		{		args[i] = token, i++, token = _stringtok(NULL, " ");
 		}		args[i] = NULL;
 		if (execute_command(args, env, &status) == -1)
 		{

@@ -5,7 +5,7 @@
  * find_executable - E
  * @fname: ..
  * @env: ..
- * Return : ..
+ * Return: ..
  *
  */
 char *find_executable(char *fname, char **env)
