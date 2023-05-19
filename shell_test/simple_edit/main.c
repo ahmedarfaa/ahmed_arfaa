@@ -46,7 +46,7 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 			filename = args[0];
 			fullpath = find_executable(filename, env), pid = fork();
 			if (pid == 0)
-			{	if (execve(fullpath, args, env) == -1)
+			{	execute_command_with_redirection(args, fullpath, env);
 				perror("execve"), exit(1);	}
 			else if (pid < 0)
 				perror("fork"), exit(1);
