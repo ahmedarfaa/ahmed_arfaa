@@ -75,7 +75,7 @@ char *find_executable(char *fname, char **env)
 		exit(1);
 	}
 
-		token = strtok(path, ":");
+		token = _stringtok(path, ":");
 	while (token != NULL)
 	{
 		path_len = _strlen(token);
@@ -96,7 +96,7 @@ char *find_executable(char *fname, char **env)
 		return (full_path);
 	}
 		free(full_path);
-		token = strtok(NULL, ":");
+		token = _stringtok(NULL, ":");
 	}
 		free(path);
 	return (NULL);
