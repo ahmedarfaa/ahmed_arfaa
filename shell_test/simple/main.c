@@ -12,17 +12,19 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 	char *commands[SIZE / 2 + 1];
 	size_t input_size = 0;
 	ssize_t read;
-	int status, i, c, num_commands;
+	int status, i, c, num_commands, count = 0;
 	struct stat st;
 	pid_t pid;
+	char error_message[50];
 	bool from_pipe = false;
 	(void) argv;
+	
 
 	if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode))
 	from_pipe = true;
 	while (1 && !from_pipe)
 	{
-		
+		count++;
 		write(STDOUT_FILENO, "$ ", 2);
 		read = getline(&input, &input_size, stdin);
 	if (read == -1)
@@ -47,7 +49,10 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 			fullpath = find_executable(filename, env), pid = fork();
 			if (pid == 0)
 			{	if (execve(fullpath, args, env) == -1)
-				perror("execve"), exit(127);	}
+				
+				_sprintf(error_message, "./hsh: %d: %s: not found\n", count, args[0]);
+				write(STDERR_FILENO, error_message, strlen(error_message));
+				 exit(127);	}
 			else if (pid < 0)
 				perror("fork"), exit(1);
 			else
