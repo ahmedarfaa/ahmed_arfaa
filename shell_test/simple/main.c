@@ -47,7 +47,7 @@ int main(int __attribute__((unused)) argc, char **argv, char **env)
 			fullpath = find_executable(filename, env), pid = fork();
 			if (pid == 0)
 			{	if (execve(fullpath, args, env) == -1)
-				perror("execve"), exit(1);	}
+				perror("execve"), exit(127);	}
 			else if (pid < 0)
 				perror("fork"), exit(1);
 			else
