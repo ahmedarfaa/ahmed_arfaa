@@ -1,36 +1,28 @@
 #include "main.h"
 
+/**
+ *
+ */
 
-int main(int argc, char **argv, char **env)
+void execute_commands_from_file(char *filename, char **env)
 {
-    char *input = NULL, *args[SIZE], *token, *filename, *fullpath;
+    char *input = NULL, *args[SIZE], *token, *fullpath;
     char *commands[SIZE / 2 + 1];
     size_t input_size = 0;
     ssize_t read;
     int status, i, c, num_commands, count = 0;
-    struct stat st;
     pid_t pid;
     char error_message[50];
-    bool from_pipe = false;
-    (void) argv;
+    FILE *fp;
 
-    if (argc > 1) {
-        execute_commands_from_file(argv[1], env);
-        return 0;
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("Error opening file");
+        exit(1);
     }
-
-    if (fstat(STDIN_FILENO, &st) == 0 && S_ISFIFO(st.st_mode))
-        from_pipe = true;
-    while (1 && !from_pipe) {
-        count++;
-        write(STDOUT_FILENO, "$ ", 2);
-        read = getline(&input, &input_size, stdin);
-        if (read == -1)
-            exit(1);
+    while ((read = getline(&input, &input_size, fp)) != -1) {
         if (input[read - 1] == '\n')
             input[read - 1] = '\0';
-        if (input[0] == '\0')
-            continue;
         num_commands = 0;
         commands[num_commands] = _stringtok(input, ";");
         while (commands[num_commands] != NULL)
@@ -42,8 +34,7 @@ int main(int argc, char **argv, char **env)
             }
             args[i] = NULL;
             if (execute_command(args, env, &status) == -1) {
-                filename = args[0];
-                fullpath = find_executable(filename, env), pid = fork();
+                fullpath = find_executable(args[0], env), pid = fork();
                 if (pid == 0) {
                     if (execve(fullpath, args, env) == -1) {
                         _sprintf(error_message, "./hsh: %d: %s: not found\n", count, args[0]);
@@ -58,7 +49,6 @@ int main(int argc, char **argv, char **env)
             }
         }
     }
-
+    fclose(fp);
     free(input);
-    return (0);
 }
