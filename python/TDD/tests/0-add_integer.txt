@@ -1,0 +1,24 @@
+==============
+testing first trial
+==============
+usage 
+============
+we can use it like 
+=====
+
+::
+    >>> add_integer = __import__('0-add_integer').add_integer
+    >>> add_integer(3, 4)
+    7
+
+::
+    >>> add_integer(2.3 , 5.1)
+    7
+
+::
+    >>> add_integer("school", 6)
+    Traceback (most recent call last):
+    TypeError: a must be an integer
+
+::
+
